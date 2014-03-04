@@ -22,7 +22,7 @@
 
 . $(dirname $0)/today.sh
 
-LOCK=${TIMELOG_LOCKER:-xlock}
+LOCK=${WORKLOCK_LOCKER:-xlock}
 DEFAULT_DELAY=300  # Default to 5 minute delay
 THRESHOLD=300  # Only log when inactive for more than 5 minutes
 
@@ -31,7 +31,7 @@ if [ -z "$WORKLOCK_DELAY" ]; then
 		xrdb -query | awk 'tolower($0) ~ /xautolock.time/ {print $2 * 60}')
 	delay=${delay:-$DEFAULT_DELAY}
 else
-	delay=$TIMELOG_DELAY
+	delay=$WORKLOCK_DELAY
 fi
 
 start_time=$(date +"%s")
