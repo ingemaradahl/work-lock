@@ -37,6 +37,18 @@ EOF
 	exit 0
 }
 
+function has_colors {
+	[ -t 1 ] && command -v tput > /dev/null && [ $(tput -T$TERM colors) -ge 8 ]
+}
+
+function init_colors {
+	if  has_colors; then
+		GREEN="\033[1;32m"
+		RED="\033[1;31m"
+		RESET="\033[0m"
+	fi
+}
+
 function active_time {
 	local day=$1
 	local start=$(awk '{print $1}' $day)
@@ -54,20 +66,19 @@ function format_diff {
 	local diff=$1
 	local neg=$([ $diff -ge 0 ]; echo $?)
 	local sign="+"
-	local color="\033[1;32m"
-	local no_color="\033[0m"
+	local color=$GREEN
 
 	if [ $neg -eq 1 ]; then
 		diff=$((0-$1))
 		sign="-"
-		color="\033[1;31m"
+		color=$RED
 	fi
 
 	local minutes=$(($diff/60))
 	local hours=$(($minutes/60))
 	local minutes=$(($minutes%60))
 
-	echo -e $(printf "%s%s%dh:%.2dm%s" $color "$sign" $hours $minutes $no_color)
+	echo -e $(printf "%s%s%dh:%.2dm%s" "$color" $sign $hours $minutes "$RESET")
 }
 
 function print_day {
@@ -100,6 +111,8 @@ fi
 
 monday=$(find_monday $offset)
 friday=$(($monday + ($SECONDS_PER_DAY*4)))
+
+init_colors
 
 echo $(date +"%d %b" --date=@$monday) - $(date +"%d %b" --date=@$friday)
 
