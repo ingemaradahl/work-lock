@@ -40,7 +40,7 @@ function echoerr {
 }
 
 function fail {
-	echoerr $1
+	echoerr $(basename $0): $1
 	exit 1
 }
 
