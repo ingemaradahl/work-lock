@@ -68,7 +68,7 @@ function format_diff {
 	local sign="+"
 	local color=$GREEN
 
-	if [ $neg -eq 1 ]; then
+	if [ $neg -ge 1 ]; then
 		diff=$((0-$1))
 		sign="-"
 		color=$RED

@@ -45,7 +45,7 @@ function fail {
 }
 
 function is_sourced {
-	[[ "${FUNCNAME[1]}" = "source" ]] && return 0 || return 1
+	[ "${FUNCNAME[1]}" = "source" ] && return 0 || return 1
 }
 
 function adjust {
@@ -69,7 +69,7 @@ function print_day {
 	local inactive=$(awk '{print $2}' $day)
 	local end=$(awk '{print $3}' $day)
 
-	if [[ ! $end =~ ^[0-9]+$  ]]; then
+	if [[ ! $end =~ ^[0-9]+$ ]]; then
 		end=$(date +"%s")
 	fi
 
@@ -80,7 +80,7 @@ function print_day {
 
 function check_help {
 	for a in "$@"; do
-		[[ "$a" == "-h" || "$a" == "--help" ]] && usage $0
+		[[ "$a" = "-h" || "$a" = "--help" ]] && usage $0
 	done
 }
 
@@ -98,7 +98,7 @@ function main {
 
 	[ -e $day ] || fail "No starting time found!"
 
-	if [ "$1" == "adjust" ]; then
+	if [ "$1" = "adjust" ]; then
 		[ ! -z $2 ] || fail "Missing argument to adjust"
 		adjust $day $2
 	fi
