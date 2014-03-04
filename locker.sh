@@ -22,7 +22,7 @@
 
 . $(dirname $0)/today.sh
 
-LOCK=xlock
+LOCK=${TIMELOG_LOCKER:-xlock}
 DEFAULT_DELAY=300  # Default to 5 minute delay
 THRESHOLD=300  # Only log when inactive for more than 5 minutes
 
