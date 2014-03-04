@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Copyright 2014 Ingemar Ådahl
 #
@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-source $(dirname $0)/today.sh
+. $(dirname $0)/today.sh
 
 LOCK=xlock
 DEFAULT_DELAY=300  # Default to 5 minute delay
@@ -53,7 +53,7 @@ seconds=$(($diff%60))
 # If zenity isn't installed the default will be active/work time
 command -v zenity > /dev/null && \
 	zenity --question --text="Log <b>${minutes}m${seconds}s</b> of inactivity?"
-if [[ $? == 0 ]]; then
+if [ $? = 0 ]; then
 	inactivity=$(($(awk '{ print $2 }' $today) + $diff))
 	sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" $today
 fi
