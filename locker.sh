@@ -26,8 +26,13 @@ LOCK=xlock
 DEFAULT_DELAY=300  # Default to 5 minute delay
 THRESHOLD=300  # Only log when inactive for more than 5 minutes
 
-delay=$(xrdb -query | awk 'tolower($0) ~ /xautolock.time/ {print $2 * 60}')
-delay=${delay:-$default_delay}
+if [ -z "$WORKLOCK_DELAY" ]; then
+	delay=$(command -v xrdb > /dev/null && \
+		xrdb -query | awk 'tolower($0) ~ /xautolock.time/ {print $2 * 60}')
+	delay=${delay:-$DEFAULT_DELAY}
+else
+	delay=$TIMELOG_DELAY
+fi
 
 start_time=$(date +"%s")
 $LOCK
