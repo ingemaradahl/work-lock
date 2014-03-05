@@ -24,7 +24,7 @@
 
 LOCK=${WORKLOCK_LOCKER:-xlock}
 DEFAULT_DELAY=300  # Default to 5 minute delay
-THRESHOLD=300  # Only log when inactive for more than 5 minutes
+THRESHOLD=600  # Only log when inactive for more than 10 minutes
 
 if [ -z "$WORKLOCK_DELAY" ]; then
 	delay=$(command -v xrdb > /dev/null && \
