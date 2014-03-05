@@ -114,7 +114,7 @@ friday=$(($monday + ($SECONDS_PER_DAY*4)))
 
 init_colors
 
-echo $(date +"%d %b" --date=@$monday) - $(date +"%d %b" --date=@$friday)
+echo $(date +"%V: %d %b" --date=@$monday) - $(date +"%d %b" --date=@$friday)
 
 for d in 0 1 2 3 4; do
 	print_day $(($monday + ($SECONDS_PER_DAY * $d)))
