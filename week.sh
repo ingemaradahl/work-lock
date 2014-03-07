@@ -104,6 +104,7 @@ function find_monday {
 check_help $@
 
 if [ ! -z $1 ]; then
+	[[ ! $1 =~ ^-[0-9]+$ ]] && fail "Negative numeric offset expected"
 	offset=$1
 else
 	offset=0
