@@ -32,7 +32,7 @@ The screensaver _must_ be blocking; it is assumed that once the screensaver comm
 
 ## Usage
 
-`today.sh` shows for how long you've been working, and how long you've been "inactive" for the current day. The amount of inactive time can be altered by passing `adjust` with a duration in minutes.  Additionally it can take an offset to show the times for previous days.
+`today.sh` shows for how long you've been working, and how long you've been "inactive" for the current day. The amount of inactive time can be altered by passing `adjust` with a duration in minutes. When passing two offsets to `adjust`, the start timestamp as well as well as the amount of inactive time will be changed. Additionally it can take an offset to show the times for previous days. See `today.sh --help` for more information.
 
 ```
 $ today.sh

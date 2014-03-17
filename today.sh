@@ -25,12 +25,21 @@ SECONDS_PER_DAY=86400
 
 function usage {
 cat <<EOF
-Usage: $(basename $0) [OFFSET] [adjust MINUTES]
+Usage: $(basename $0) [OFFSET] [adjust [START] MINUTES]
 Prints active and inactive amount of time for the current day.
 
-With OFFSET given, prints the times for the day offset from the current day.
+With OFFSET, the times for the day offset from the current day is printed.
 Adding adjust with MINUTES will modify the inactive amount with MINUTES.
-Both OFFSET and MINUTES can be negative, allowing you to see in to the future.
+Additionally, the starting time of the given day can be changed by offsetting
+with START minutes.  OFFSET, START, and MINUTES can all be negative.
+
+Example:
+  $ today.sh
+  6h:17m 0h:20m
+  $ today.sh adjust -10
+  6h:27m 0h:10m
+  $ today.sh adjust 10 0
+  6h:17m 0h:10m
 EOF
 	exit 0
 }
@@ -48,15 +57,27 @@ function is_sourced {
 	[ "${FUNCNAME[1]}" = "source" ] && return 0 || return 1
 }
 
+function expect_digit {
+	[[ $1 =~ ^-?[0-9]+$ ]] || fail "$2"
+}
+
 function adjust {
 	local day=$1
-	local adjustment=$2
-	local inactivity=$(($(awk '{ print $2 }' $day) + ($adjustment * 60)))
-	if [ $inactivity -lt 0 ]; then
-		local start=$(($(awk '{print $1 }' $day) + $inactivity))
-		echo "$start 0" > $day
-	else
+	local start_shift=$(($2 * 60))
+	local time_shift=$(($3 * 60))
+
+	local inactivity=$(($(awk '{ print $2 }' $day) + $time_shift))
+
+	if [[ $start_shift -eq 0 && $inactivity -ge 0 ]]; then
 		sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" $day
+	else
+		local start=$(($(awk '{print $1}' $day) + $start_shift))
+		if [ $inactivity -lt 0 ]; then
+			start=$(($start + $inactivity))
+			echo "$start 0" > $day
+		else
+			echo "$start $inactivity" > $day
+		fi
 	fi
 }
 
@@ -104,8 +125,16 @@ function main {
 	[ -e $day ] || fail "No starting time found!"
 
 	if [ "$1" = "adjust" ]; then
-		[ ! -z $2 ] || fail "Missing argument to adjust"
-		adjust $day $2
+		[ -z $2 ] && fail "Missing argument to adjust"
+		expect_digit $2 "Bad argument to adjust: $2"
+
+		if [ -z $3 ]; then
+			adjust $day 0 $2
+		else
+			expect_digit $3 "Bad argument to adjust: $3"
+			adjust $day $2 $3
+		fi
+
 	fi
 
 	print_day $day
