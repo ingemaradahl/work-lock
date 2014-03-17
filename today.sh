@@ -52,7 +52,12 @@ function adjust {
 	local day=$1
 	local adjustment=$2
 	local inactivity=$(($(awk '{ print $2 }' $day) + ($adjustment * 60)))
-	sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" $day
+	if [ $inactivity -lt 0 ]; then
+		local start=$(($(awk '{print $1 }' $day) + $inactivity))
+		echo "$start 0" > $day
+	else
+		sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" $day
+	fi
 }
 
 function format_time {
