@@ -40,25 +40,25 @@ end_time=$(date +"%s")
 
 today="${LOGDIR}/$(date +'%Y%m%d')"
 
-if [ ! -e $today ]; then
-	echo "$end_time 0" > $today
+if [ ! -e "$today" ]; then
+	echo "$end_time 0" > "$today"
 
 	# Append EOD for previous work day
 	sed -i "s/\(.*\)/\1 ${start_time}/" \
-		${LOGDIR}/$(date --date="@${start_time}" +"%Y%m%d")
+		"${LOGDIR}/$(date --date=@$start_time +'%Y%m%d')"
 	exit 0
 fi
 
-diff=$((($end_time-$start_time)+$delay))
+diff=$(((end_time-start_time)+delay))
 [ $diff -lt $THRESHOLD ] && exit 0
 
-minutes=$(($diff/60))
-seconds=$(($diff%60))
+minutes=$((diff/60))
+seconds=$((diff%60))
 
 # If zenity isn't installed the default will be active/work time
 command -v zenity > /dev/null && \
 	zenity --question --text="Log <b>${minutes}m${seconds}s</b> of inactivity?"
 if [ $? = 0 ]; then
-	inactivity=$(($(awk '{ print $2 }' $today) + $diff))
-	sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" $today
+	inactivity=$(($(awk '{ print $2 }' "$today") + diff))
+	sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" "$today"
 fi

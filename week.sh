@@ -57,7 +57,7 @@ function active_time {
 		local end=$(date +"%s")
 	fi
 
-	echo $(($end - $start - $inactive))
+	echo $((end - start - inactive))
 }
 
 function format_diff {
@@ -72,9 +72,9 @@ function format_diff {
 		color=$RED
 	fi
 
-	local minutes=$(($diff/60))
-	local hours=$(($minutes/60))
-	local minutes=$(($minutes%60))
+	local minutes=$((diff/60))
+	local hours=$((minutes/60))
+	local minutes=$((minutes%60))
 
 	echo -e $(printf "%s%s%dh:%.2dm%s" "$color" $sign $hours $minutes "$RESET")
 }
@@ -86,8 +86,8 @@ function print_day {
 	[ ! -e $day_file ] && return 1
 
 	local active=$(active_time $day_file)
-	local diff=$(($active-$SECONDS_REQUIRED))
-	TOTAL_SECONDS=$(($TOTAL_SECONDS+$active))
+	local diff=$((active-SECONDS_REQUIRED))
+	TOTAL_SECONDS=$((TOTAL_SECONDS+active))
 	printf "%-10s %s %s\n" \
 		"$weekday:" \
 		$(format_time $active) \
@@ -96,12 +96,12 @@ function print_day {
 
 function find_monday {
 	local offset=$1
-    echo $(($(date +"%s") - (($(date +"%u") - 1 - $offset*7)*$SECONDS_PER_DAY)))
+    echo $(($(date +"%s") - (($(date +"%u") - 1 - offset*7)*SECONDS_PER_DAY)))
 }
 
-check_help $@
+check_help "$@"
 
-if [ ! -z $1 ]; then
+if [[ -n $1 ]]; then
 	[[ ! $1 =~ ^-[0-9]+$ ]] && fail "Negative numeric offset expected"
 	offset=$1
 else
@@ -109,15 +109,15 @@ else
 fi
 
 monday=$(find_monday $offset)
-friday=$(($monday + ($SECONDS_PER_DAY*4)))
+friday=$((monday + SECONDS_PER_DAY*4))
 
 init_colors
 
 echo $(date +"%V: %d %b" --date=@$monday) - $(date +"%d %b" --date=@$friday)
 
 for d in 0 1 2 3 4; do
-	print_day $(($monday + ($SECONDS_PER_DAY * $d)))
-	[ $? -eq 0 ] && TOTAL_REQUIRED=$(($TOTAL_REQUIRED+$SECONDS_REQUIRED))
+	print_day $((monday + SECONDS_PER_DAY * d))
+	[ $? -eq 0 ] && TOTAL_REQUIRED=$((TOTAL_REQUIRED+SECONDS_REQUIRED))
 done
 
-echo -e "+/-:              $(format_diff $(($TOTAL_SECONDS-$TOTAL_REQUIRED)))"
+echo -e "+/-:              $(format_diff $((TOTAL_SECONDS-TOTAL_REQUIRED)))"

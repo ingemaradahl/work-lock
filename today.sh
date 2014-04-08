@@ -70,14 +70,14 @@ function adjust {
 	local start_shift=$(($2 * 60))
 	local time_shift=$(($3 * 60))
 
-	local inactivity=$(($(awk '{ print $2 }' $day) + $time_shift))
+	local inactivity=$(($(awk '{ print $2 }' $day) + time_shift))
 
 	if [[ $start_shift -eq 0 && $inactivity -ge 0 ]]; then
 		sed -i "s/\([0-9]\+\) [0-9]\+/\1 ${inactivity}/" $day
 	else
-		local start=$(($(awk '{print $1}' $day) + $start_shift))
+		local start=$(($(awk '{print $1}' $day) + start_shift))
 		if [ $inactivity -lt 0 ]; then
-			start=$(($start + $inactivity))
+			start=$((start + inactivity))
 			echo "$start 0" > $day
 		else
 			echo "$start $inactivity" > $day
@@ -87,8 +87,8 @@ function adjust {
 
 function format_time {
 	local minutes=$(($1/60))
-	local hours=$(($minutes/60))
-	local minutes=$(($minutes%60))
+	local hours=$((minutes/60))
+	local minutes=$((minutes%60))
 
 	printf "%dh:%.2dm" $hours $minutes
 }
@@ -103,7 +103,7 @@ function print_day {
 		end=$(date +"%s")
 	fi
 
-	local active=$(($end-($start+$inactive)))
+	local active=$((end-(start+inactive)))
 
 	echo "$(format_time $active) $(format_time $inactive)"
 }
@@ -115,10 +115,10 @@ function check_help {
 }
 
 function main {
-	check_help $@
+	check_help "$@"
 
 	if [[ $1 =~ ^-?[0-9]+$ ]]; then
-		timestamp=$(($(date +'%s') + ($SECONDS_PER_DAY * $1)))
+		timestamp=$(($(date +'%s') + (SECONDS_PER_DAY * $1)))
 		date +"%a %b %d" --date=@$timestamp
 		local day="${LOGDIR}/$(date +'%Y%m%d' --date=@$timestamp)"
 		shift
@@ -155,5 +155,5 @@ function main {
 	print_day $day
 }
 
-mkdir -p $LOGDIR
-is_sourced || main $@
+mkdir -p "$LOGDIR"
+is_sourced || main "$@"
