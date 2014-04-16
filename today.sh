@@ -38,11 +38,11 @@ Optionally, one of the following commands is accepted:
    eod      print the time at which a full working day is completed.
 
 Example:
-  $ today.sh
+  \$ today.sh
   6h:17m 0h:20m
-  $ today.sh adjust -10
+  \$ today.sh adjust -10
   6h:27m 0h:10m
-  $ today.sh adjust 10 0
+  \$ today.sh adjust 10 0
   6h:17m 0h:10m
 EOF
 	exit 0
